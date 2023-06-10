@@ -24,16 +24,69 @@ scene.add(ambientLight);
 
 //############################################################################################
 //############################################################################################
-// MAIN CODE HERE 
+//SPHERES 
 
-const mySphere =  new THREE.Mesh(
+const player =  new THREE.Mesh(
     new THREE.SphereGeometry(12,23,23),
     new THREE.MeshStandardMaterial({color: 0x5543321})
 );
-scene.add(mySphere);
+scene.add(player);
+//############################################################################################
+//############################################################################################
+// SPHERE/CHARACTER MOVEMENT
+
+//both keyup and keydown? + mousedown and mouseup?
+//button based movement 
+
+const forwardButton =  document.getElementById("forward");
+const backwardButton = document.getElementById("backward");
+
+let mousedownID = -1;
+function mouseDown(e){
+    if(mousedownID==-1){
+        // mousedownID = setInterval(whilemousedownforward, 25);
+        if(e.target == forwardButton){
+            mousedownID = setInterval(whilemousedownforward, 25);
+        }
+        else if(e.target == backwardButton){
+            mousedownID = setInterval(whilemousedownbackward, 25);
+        }  
+    }    
+}
 
 
+function mouseUp(){
+    if(mousedownID!=-1){
+        clearInterval(mousedownID);
+        mousedownID=-1;
+    }
+}
+function whilemousedownforward(){
+    player.position.x += 1;
+}
+function whilemousedownbackward(){
+    player.position.x -= 1;
+}
 
+
+forwardButton.addEventListener("mousedown", mouseDown);
+forwardButton.addEventListener("mouseup", mouseUp);
+
+backwardButton.addEventListener("mousedown", mouseDown);
+backwardButton.addEventListener("mouseup", mouseUp);
+
+
+//Keyboard based movement 
+document.addEventListener("keydown",(e) => {
+    switch (e.key) {
+      case "w":
+      player.position.x += 1;
+      break;
+      case "s":
+      player.position.x -= 1;
+      break;
+    }
+  })
 
 //############################################################################################
 //############################################################################################
@@ -41,8 +94,15 @@ scene.add(mySphere);
 
 
 function animate(){
-    requestAnimationFrame(animate);  
+    requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
 }
 animate();
+
+
+window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
